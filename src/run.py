@@ -39,10 +39,13 @@ if __name__ == '__main__':
         # Access results
         print(prediction.processed_images.shape) # Processed images : [N, H, W, 3] uint8   array
         print(prediction.depth.shape)        # Depth maps: [N, H, W] float32
-        print(prediction.conf.shape)         # Confidence maps: [N, H, W] float32
-        print(prediction.extrinsics.shape)   # Camera poses (w2c): [N, 3, 4] float32
-        print(prediction.intrinsics.shape)   # Camera intrinsics: [N, 3, 3] float32
-        # print(prediction.intrinsics)
+        if prediction.conf is not None:
+            print(prediction.conf.shape)         # Confidence maps: [N, H, W] float32
+        if prediction.extrinsics is not None:
+            print(prediction.extrinsics.shape)   # Camera poses (w2c): [N, 3, 4] float32
+        if prediction.intrinsics is not None:
+            print(prediction.intrinsics.shape)   # Camera intrinsics: [N, 3, 3] float32
+            print(prediction.intrinsics)
 
         # inferred depth map [H,W].
         infer_depth = prediction.depth.squeeze(0)
