@@ -20,6 +20,8 @@ if __name__ == '__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = DepthAnything3.from_pretrained(args.load_from)
     model = model.to(device=device)
+    model.eval()
+    print(f"Model {args.load_from} loaded on {device}")
 
     os.makedirs(args.outdir, exist_ok=True)
     cmap = matplotlib.colormaps.get_cmap('Spectral')
@@ -32,8 +34,11 @@ if __name__ == '__main__':
     for k, filename in enumerate(filenames):
         print(f'Progress {k+1}/{len(filenames)}: {filename}')
         images = [filename, ]  # List of image paths, PIL Images, or numpy arrays
+        output_path = os.path.join(args.outdir, os.path.splitext(os.path.basename(filename))[0])
         prediction = model.inference(
             images,
+            export_dir=output_path,
+            export_format="mini_npz-depth_vis"
         )
 
         # Access results
