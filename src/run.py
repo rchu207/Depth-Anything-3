@@ -156,5 +156,6 @@ if __name__ == '__main__':
         export_to_depth_vis(scaled_image, infer_depth, args.outdir, filename)
 
     print('----------Summary----------')
+    print('file,height,width,min,max,fx,fy')
     for msg in summary:
         print(msg)
