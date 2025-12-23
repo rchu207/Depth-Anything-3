@@ -120,8 +120,39 @@ if __name__ == '__main__':
         logger.info(f'Progress {k+1}/{len(filenames)}: {filename}')
 
         images = [filename, ]  # List of image paths, PIL Images, or numpy arrays
+        extrinsics_array = np.array(
+            [[[0.999993, 0.003011, -0.002193, 0.000034],
+                [-0.003011, 0.999995, -0.000173, 0.000104],
+                [0.002192, 0.000179, 0.999998, -0.000458],
+                [0.0, 0.0, 0.0, 1.0]]]
+        )
+        # extrinsics_array = np.array(
+        #     [[[1.0, 0.0, 0.0, 0.0],
+        #         [0.0, 1.0, 0.0, 0.0],
+        #         [0.0, 0.0, 1.0, 0.0],
+        #         [0.0, 0.0, 0.0, 1.0]]]
+        # )
+        # print(extrinsics_array.shape)
+        # print(extrinsics_array)
+        # Honor_Photo/circleWall.jpeg
+        # fx = 4053
+        # fy = 4102
+        fx = 2742 * 144.0 / 36.0
+        fy = 3820 * 144.0 / 36.0
+        cx = 2742 / 2
+        cy = 3820 / 2
+        intrinsics_array = np.array(
+            [[[fx, 0.0, cx],
+                [0.0, fy, cy],
+                [0.0, 0.0, 1.0]]]
+        )
+        # print(intrinsics_array.shape)
+        # print(intrinsics_array)
         prediction = model.inference(
             images,
+            extrinsics=extrinsics_array,
+            intrinsics=intrinsics_array,
+            use_ray_pose=False,
         )
 
         # Access results
@@ -131,9 +162,18 @@ if __name__ == '__main__':
             logger.info(prediction.conf.shape)         # Confidence maps: [N, H, W] float32
         if prediction.extrinsics is not None:
             logger.info(prediction.extrinsics.shape)   # Camera poses (w2c): [N, 3, 4] float32
+            logger.info(prediction.extrinsics)
+            for x in prediction.extrinsics:
+                for y in x:
+                    for z in y:
+                        print(f"{z:.6f}")
         if prediction.intrinsics is not None:
             logger.info(prediction.intrinsics.shape)   # Camera intrinsics: [N, 3, 3] float32
             logger.info(prediction.intrinsics)
+            for x in prediction.intrinsics:
+                for y in x:
+                    for z in y:
+                        print(f"{z:.6f}")
 
         # inferred depth map [H,W].
         infer_depth = prediction.depth.squeeze(0)

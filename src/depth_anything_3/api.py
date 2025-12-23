@@ -350,6 +350,10 @@ class DepthAnything3(nn.Module, PyTorchModelHubMixin):
         if extrinsics is None:
             return prediction
         prediction.intrinsics = intrinsics.numpy()
+
+        # when set extrinsics in input parameters, Umeyama alignment is not possible.
+        # prediction.extrinsics = extrinsics.numpy()
+
         _, _, scale, aligned_extrinsics = align_poses_umeyama(
             prediction.extrinsics,
             extrinsics.numpy(),
