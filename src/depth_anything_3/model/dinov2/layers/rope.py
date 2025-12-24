@@ -53,7 +53,12 @@ class PositionGetter:
         if (height, width) not in self.position_cache:
             y_coords = torch.arange(height, device=device)
             x_coords = torch.arange(width, device=device)
-            positions = torch.cartesian_prod(y_coords, x_coords)
+            if False:
+                # for tflite export
+                yy, xx = torch.meshgrid(y_coords, x_coords, indexing="ij")
+                positions = torch.stack((yy.reshape(-1), xx.reshape(-1)), dim=-1)
+            else:
+                positions = torch.cartesian_prod(y_coords, x_coords)
             self.position_cache[height, width] = positions
 
         cached_positions = self.position_cache[height, width]
