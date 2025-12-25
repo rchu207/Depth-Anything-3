@@ -5,6 +5,7 @@ import numpy as np
 import os
 import torch
 import qai_hub as hub
+import depth_anything_3.cfg as da3cfg
 
 from depth_anything_3.api import DepthAnything3
 
@@ -40,6 +41,7 @@ def main():
     print(f"Model {model_full_name} loaded on cpu")
 
     # Step 1: Trace model
+    da3cfg.export_tflite_aihub = True
     input_shape = (1, 3, args.input_size, args.input_size)
     example_input = torch.rand(input_shape)
     traced_torch_model = torch.jit.trace(depth_anything, example_input)

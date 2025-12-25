@@ -18,6 +18,7 @@ from typing import Dict, Tuple
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import depth_anything_3.cfg as da3cfg
 
 
 class PositionGetter:
@@ -53,8 +54,8 @@ class PositionGetter:
         if (height, width) not in self.position_cache:
             y_coords = torch.arange(height, device=device)
             x_coords = torch.arange(width, device=device)
-            if False:
-                # for tflite export
+            # for TFLite export
+            if da3cfg.export_tflite_aihub:
                 yy, xx = torch.meshgrid(y_coords, x_coords, indexing="ij")
                 positions = torch.stack((yy.reshape(-1), xx.reshape(-1)), dim=-1)
             else:
