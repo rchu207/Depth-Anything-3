@@ -48,6 +48,7 @@ class DualDPT(nn.Module):
         patch_size: int = 14,
         output_dim: int = 2,
         activation: str = "exp",
+        max_depth: int = 0,
         conf_activation: str = "expp1",
         features: int = 256,
         out_channels: Sequence[int] = (256, 512, 1024, 1024),
@@ -62,6 +63,7 @@ class DualDPT(nn.Module):
         # -------------------- configuration --------------------
         self.patch_size = patch_size
         self.activation = activation
+        self.max_depth = max_depth
         self.conf_activation = conf_activation
         self.pos_embed = pos_embed
         self.down_ratio = down_ratio
@@ -243,7 +245,11 @@ class DualDPT(nn.Module):
         # fused_main = self.scratch.output_conv1(fused_main)
         main_logits = self.scratch.output_conv2(fused_main)
         fmap = main_logits.permute(0, 2, 3, 1)
-        main_pred = self._apply_activation_single(fmap[..., :-1], self.activation)
+        # add max depth to simulate DA2 metric depth
+        if self.max_depth > 0:
+            main_pred = self._apply_activation_single(fmap[..., :-1], self.activation) * self.max_depth
+        else:
+            main_pred = self._apply_activation_single(fmap[..., :-1], self.activation)
         main_conf = self._apply_activation_single(fmap[..., -1], self.conf_activation)
 
         # Auxiliary head (multi-level inside) -> only last level returned (after activation)
