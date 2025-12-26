@@ -120,8 +120,27 @@ if __name__ == '__main__':
         logger.info(f'Progress {k+1}/{len(filenames)}: {filename}')
 
         images = [filename, ]  # List of image paths, PIL Images, or numpy arrays
+        # estimated extrinsics array from Honor_Photo/circleWall.jpeg
+        extrinsics_array = np.array(
+            [[[0.999993, 0.003011, -0.002193, 0.000034],
+                [-0.003011, 0.999995, -0.000173, 0.000104],
+                [0.002192, 0.000179, 0.999998, -0.000458],
+                [0.0, 0.0, 0.0, 1.0]]]
+        )
+        # intrinsics array from Honor_Photo/circleWall.jpeg
+        fx = 2742 * 144.0 / 36.0
+        fy = 3820 * 144.0 / 36.0
+        cx = 2742 / 2
+        cy = 3820 / 2
+        intrinsics_array = np.array(
+            [[[fx, 0.0, cx],
+                [0.0, fy, cy],
+                [0.0, 0.0, 1.0]]]
+        )
         prediction = model.inference(
             images,
+            # extrinsics=extrinsics_array,
+            # intrinsics=intrinsics_array,
             use_ray_pose=False,
         )
 
