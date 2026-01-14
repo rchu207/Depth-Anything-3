@@ -33,7 +33,7 @@ def main():
     parser.add_argument('--input-size', type=int, default=504)
     parser.add_argument('--load-from', type=str, default='depth-anything/da3-large')
     args = parser.parse_args()
-    
+
     # Load model from Hugging Face Hub
     depth_anything = DepthAnything3.from_pretrained(args.load_from)
     depth_anything = depth_anything.to('cpu').eval()
